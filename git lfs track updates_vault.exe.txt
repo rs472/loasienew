@@ -1,0 +1,19 @@
+git lfs track "updates_vault/*.exe"
+git add .gitattributes
+
+git add updates_vault/brainbot_latest.exe
+
+git commit -m "ota: sync brainbot_latest to updates_vault"
+git push origin main
+
+
+#### py
+
+git lfs track "/*.py"
+git add .gitattributes
+
+git add app.py
+ 
+git commit -m "path ota fixed. TRY 2"
+
+git push origin main

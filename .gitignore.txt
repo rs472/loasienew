@@ -1,0 +1,17 @@
+# Ambientes Virtuais
+venv/
+.venv/
+env/
+
+# Cache de Python e IA
+__pycache__/
+.cache/
+.huggingface/
+
+# Arquivos do PyInstaller (se você gerou o .exe)
+dist/
+build/
+*.spec
+
+# Documentos da demo (Opcional: se forem muitos, suba apenas 2 ou 3 exemplos)
+# demo_data/
