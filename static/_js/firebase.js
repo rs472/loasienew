@@ -140,37 +140,47 @@ if (registrationForm) {
       btnCreate.textContent = "Enviando código...";
     }
 
-    try {
-      // Solicita ao backend o envio do código de 6 dígitos por e-mail
-      const response = await fetch('/api/send-2fa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        // Oculta login/cadastro e exibe apenas a tela do código 2FA
-        document.getElementById('loginForm')?.classList.add('hidden');
-        document.getElementById('divider')?.classList.add('hidden');
-        registrationForm.classList.add('hidden');
-
-        document.getElementById('display-target').textContent = email;
-        verifyForm?.classList.remove('hidden');
-      } else {
-        alert(data.message || "Couldn't get validation key.");
-      }
-    } catch (error) {
-      console.error("Error to request 2FA:", error);
-      alert("Error to send code, conection field.");
-    } finally {
-      if (btnCreate) {
-        btnCreate.disabled = false;
-        btnCreate.textContent = "Criar";
-      }
-    }
+   try {
+  // Solicita ao backend o envio do código de 6 dígitos por e-mail
+  const response = await fetch('/api/send-2fa', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
   });
+
+  // 1. First verify if the HTTP response status is 2xx OK
+  if (!response.ok) {
+    // Read raw text/HTML to avoid "Unexpected token <" JSON parse errors
+    const errorText = await response.text();
+    console.error(`Server error (${response.status}):`, errorText);
+    alert(`Server error (${response.status}). Check server logs.`);
+    return;
+  }
+
+  // 2. Safe to parse JSON now
+  const data = await response.json();
+
+  if (data.success) {
+    // Oculta login/cadastro e exibe apenas a tela do código 2FA
+    document.getElementById('loginForm')?.classList.add('hidden');
+    document.getElementById('divider')?.classList.add('hidden');
+    registrationForm?.classList.add('hidden');
+
+    const displayTarget = document.getElementById('display-target');
+    if (displayTarget) displayTarget.textContent = email;
+
+    verifyForm?.classList.remove('hidden');
+  } else {
+    alert(data.message || "Couldn't get validation key.");
+  }
+} catch (error) {
+  console.error("Error requesting 2FA:", error);
+  alert("Error sending code. Connection failed.");
+} finally {
+  if (btnCreate) {
+    btnCreate.disabled = false;
+    btnCreate.textContent = "Criar";
+  }
 }
 
 
@@ -330,7 +340,7 @@ onAuthStateChanged(auth, (user) => {
       userEmail = user.email;
       console.log("Authenticated user:", userEmail);
     } else {
-      doSomething();
+      console.error("Error to request 2FA:", error);
     }
   });
 
