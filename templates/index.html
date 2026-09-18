@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang='pt-br'>
+<head>
+  <!--NAME OF PAGE AND GET CSS FOLDER-->
+    <title>LOA I.T Tech</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="imagex/png" href="{{ url_for('static', filename='_images/logo_loa.ico')}}">
+</head>
+<body>
+  <!--menu superior-->
+
+<div id="user-panel" style="position: absolute; top: 10px; right: 140px;; display: none; font-family: sans-serif;">
+    <span id="user-greeting"></span> | 
+    <a href="{{ url_for('painel') }}" target="_self" style="text-decoration: none; color: rgb(0, 255, 200);" data-i18n="navPanel">Painel</a> | 
+    <button id="btn-logout" style="background: none; border: none; color: red; cursor: pointer; padding: 0;" data-i18n="btnLogout">Sair</button>
+</div>
+
+  <!---BUTTON CHANGE LANGUAGE-->
+  <div class="lang-switcher" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <button onclick="switchLang('pt')">PT</button>
+    <button onclick="switchLang('en')">EN</button>
+    <button onclick="switchLang('es')">ES</button>
+</div>
+
+<!-- BUTTON LOGIN -->
+<div class="Login" style="position: fixed; top: 10px; right: 140px; z-index: 1000;">
+  <button id="btnLogin">Login</button>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+  
+  <style>
+    .hidden { display: none !important; }
+    .code-input { letter-spacing: 8px; font-size: 1.5rem; text-align: center; font-weight: bold; }
+  </style>
+
+  <!-- LOGIN SCREEN -->
+  <div id="windowLogin" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:1000; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+    
+    <!-- MENSAGEM DE FEEDBACK -->
+    <div id="feedback-msg" class="hidden" style="margin-bottom: 10px; padding: 8px; border-radius: 4px;"></div>
+
+    <!-- 1. FORMULÁRIO DE LOGIN -->
+    <form id="loginForm">
+      <h2>Login</h2>
+      <input type="email" id="eMail" placeholder="E-mail" required>
+      <input type="password" id="passWord" data-i18n-placeholder="passWord" placeholder="Senha" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <hr id="divider">
+    
+    <!-- 2. FORMULÁRIO DE CRIAÇÃO DE CONTA -->
+    <form id="registrationForm">
+      <h2 data-i18n="LoginTitle"> Criar conta</h2>
+      <input type="text" id="userName" data-i18n-placeholder="userName" placeholder="Nome de usuário" required>
+      <input type="email" id="creatEmail" placeholder="E-mail" required>
+      <input type="text" id="userCompany" data-i18n-placeholder="userCompany" placeholder="Nome da Empresa" required>
+      <input type="password" id="newPassword" data-i18n-placeholder="newPassword" placeholder="Nova Senha" required>
+      <input type="password" id="confirmPassword" data-i18n-placeholder="confirmPassword" placeholder="Repetir senha" required>
+      
+      <button type="submit" id="btnCreate" data-i18n="btnCreate">Criar</button>
+      <button type="button" id="btnClose" data-i18n="btnClose">Fechar</button>
+    </form>
+
+    <!-- 3. PASSO 2FA: VALIDAR CÓDIGO (Inicia Oculto) -->
+    <form id="form-verify-code" class="hidden">
+      <h2>Verificação de Segurança</h2>
+      <p>Insira o código de 6 dígitos enviado para <b id="display-target"></b>.</p>
+      <div class="form-group" style="margin: 15px 0;">
+        <input type="text" id="otp-code" class="code-input" maxlength="6" placeholder="000000" required>
+      </div>
+      <button type="submit" id="btn-verify">Validar Código</button>
+      <p style="text-align: center; margin-top: 1rem;">
+        <a href="#" id="link-resend" style="color: #0066cc; text-decoration: none; font-size: 0.85rem;">Não recebeu? Tentar novamente</a>
+      </p>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  // Abertura e Fechamento da Modal
+  const modal = document.getElementById('windowLogin');
+  document.getElementById('btnLogin').onclick = () => modal.style.display = 'block';
+  document.getElementById('btnClose').onclick = () => modal.style.display = 'none';
+</script>
+
+<!--intro site-->
+<div class="intro">
+    <img src="{{ url_for('static', filename='_images/logo_loa.png') }}" alt="Logo" class="logo-img">
+    <div class="intro-text">
+        <h1 data-i18n = "intro-title" id="wellCome">Bem-vindo à LOA I.T.</h1>
+        <h2 data-i18n = "intro-subtitle1">Menos cliques, mais resultados: impulsionando a eficiência da sua empresa.</h2>
+        <h2 data-i18n = "intro-subtitle2">Especializada em Desenvolvimento de sistemas e inteligência artificial</h2>
+    </div>
+</div>
+
+<!--about-->
+<div class="about">
+    <img src="{{ url_for('static', filename='_images/about.png') }}" alt='About' class="about-img">
+    <div class="about-text">
+        <h2 data-i18n = "about-title">Sobre a LOA:</h2>
+        <p data-i18n = "about-text">
+            A trajetória da <b>LOA</b> teve início em 2021 com o projeto LogiHeart, focado em revolucionar a logística empresarial.<wbr> <br>
+            Nossa missão nasceu da busca pela eficiência: otimizar o controle de estoque para que o usuário pudesse <b>digitar menos e produzir muito mais</b>.<wbr> <br>
+            Com o tempo, expandimos nossas soluções para novas aplicações, mantendo sempre o compromisso central de simplificar a rotina do usuário final.<wbr> <br>
+            Unimos nossa paixão por tecnologia ao desejo de transformar processos complexos em experiências ágeis e intuitivas.<wbr> <br>
+            Hoje, a <b>LOA</b> continua potencializando a produtividade de empresas logísticas através do LogiHeart, entregando soluções personalizadas que atendem às necessidades exclusivas de cada negócio.
+        </p>
+    </div>
+</div>
+
+<!-- Services-->
+<div class="centralizado">
+  <h2 data-i18n = "services-title">Serviços</h2>
+  <div class="services-images">
+    <div>
+      <a href="{{ url_for('logiheart') }}" target="_self">
+      <img src="{{ url_for('static', filename='_images/icone_lh250250.png') }}" alt="LogiHeart">
+      <p>stockHeart</p></a>
+    </div>
+    <div>
+      <a href="{{ url_for('brainbot') }}" target="_self">
+      <img src="{{ url_for('static', filename='_images/logo_brainbot.png') }}" alt="download">
+      <p>BrainBot</p></a>
+    </div>
+  </div>
+</div>
+
+<!--Portifolioo  ------   JAVASCRIPT IS BUILT INTO THE CODE------->
+<section id="portfolio" class="centralizado">
+  <h2 data-i18n="portfolio-title">Destaques:</h2>
+  <div class="portfolio-grid">
+    <!-- Portfólio 1 -->
+    <div class="projeto">
+        <img src="{{ url_for('static', filename='_images/portifolio/BrainBot_working_db.png') }}" alt="Projeto 1">
+        <h3 data-i18n="chat-title" >BrainBot Chat Tarefas Implementado com I.A funcionando com Banco de Dados</h3>
+        <p data-i18n = "chat-desc">Um chat assistente que executa suas tarefas através de comandos simples</p>
+        <button class="btn" data-i18n="btn-more" onclick="document.getElementById('modal1').style.display='block'">Saiba Mais</button>
+    </div>
+
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('modal1').style.display='none'">&times;</span>
+            <h2 data-i18n = "chat-title">BrainBot Chat Tarefas Implementado com I.A funcionando com Banco de Dados</h2>
+            <img src="{{ url_for('static', filename='_images/portifolio/BrainBot_working_db.png') }}" alt="Projeto 1" class="modal-img">
+            <p data-i18n = "chat-desription">Aqui está uma captura de tela do BrainBot em ação. Além de consultar PDFs e planilhas, o BrainBot também pode consultar bancos de dados e adicionar e excluir dados. Como podemos ver, o usuário solicitou o agendamento de uma reunião e o BrainBot criou uma agenda para ele, tudo por meio de palavras-chave seguidas de uma simples instrução.<wbr> <br> (O BrainBot fala Português, Inglês e Espanhol)</p>
+            <p data-i18n="chat-desription2"><b>Veja mais na sessão:</b> BrainBot</p>
+        </div>
+    </div>
+
+    <!-- Portfólio 2 -->
+    <div class="projeto">
+        <img src="{{ url_for('static', filename='_images/portifolio/StockHeart Papper working.png') }}" alt="MPCP">
+        <h2 data-i18n="mpsite-title">StockHeart: Stock Management</h2>
+        <p data-i18n="mpsite-desc">Cadastre, Controle, Pese.</p>
+        <button class="btn" data-i18n="btn-more" onclick="document.getElementById('modal2').style.display='block'">Saiba Mais</button>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content2">
+            <span class="close" onclick="document.getElementById('modal2').style.display='none'">&times;</span>
+            <h2 data-i18n="mpsite-title">StockHeart: Stock Management</h2>
+            <style>
+                .modal-img-large {
+                    width: 100%;       /* Ocupa a largura total disponível do modal */
+                    max-width: 900px;  /* Permite que sistemas fiquem grandes o suficiente para ler */
+                    height: auto;      /* Mantém a proporção */
+                    display: block;
+                    margin: 0 auto 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                                }
+            </style>
+            <img src="{{ url_for('static', filename='_images/portifolio/StockHeart Papper working.png') }}" alt="MPCP" class="modal-img-large">
+            <p data-i18n="mpsite-description">O StockHeart tem um propósito de ser personalizavel de acordo com sua necessidade <em>Mercados, fábricas, Almoxarifados etc.</em> Aqui vemos um exemplo dele funcionando em uma frábrica de papel.</p>
+            <p data-i18n="mpsite-description2"><strong>Saiba mais na sessão:</strong> StockHeart.</p>
+        </div>
+    </div>
+
+    <!-- Portfólio 3 -->
+    <div class="projeto">
+      <img src="{{ url_for('static', filename='_images/portifolio/save-images-lockscreen2.png') }}" alt="Projeto 3">
+      <h3 data-i18n="imagedowloader-title">Spotlight Saver</h3>
+      <p data-i18n="imagedowloader-desc">Salve imagens da tela de bloqueio.</p>
+      <button class="btn" data-i18n="btn-more" onclick="document.getElementById('modal3').style.display='block'">Saiba Mais</button>
+    </div>
+
+        <div id="modal3" class="modal">
+            <div class="modal-content3">
+        
+            <span class="close" onclick="document.getElementById('modal3').style.display='none'">&times;</span>
+            <h2 data-i18n="imagedowloader-title">Salve imagens da tela de bloqueio do Windows</h2>
+            <img src="{{ url_for('static', filename='_images/portifolio/save-images-lockscreen2.png') }}" alt="Projeto 3" class="modal-img img-spotlight">
+            <p data-i18n="imagedowloader-desription"><b>Descrição:</b> Sabe quando o Windows te mostra uma linda imagem na tela de bloqueio? Com um simples clique ela pode ser sua.
+               Esta aplicação está disponível para download clicando abaixo. Experimente ;)</p>
+            <a href="{{ url_for('static', filename='_media/Spotlight_Saver.zip') }}"  class="btn">Download</a>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!--LABEL AND CONTAT AREA-->
+
+<h4 data-i18n="labelcontact">- Fale conosco através dos nossos meios de comunicação:</h4>
+
+<section id="contato" style="padding: 60px 30; text-align: center;">
+  <form action="/enviar" method="POST" style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;">
+    <input type="text" name="nome" id="nome"
+       placeholder="Nome"
+       data-i18n-placeholder="form.name"
+       required>
+
+    <input type="email" name="email" id="email"
+          placeholder="E-mail"
+          data-i18n-placeholder="form.email"
+          required>
+
+    <input type="tel" name="telefone" id="telefone"
+          placeholder="Telefone"
+          data-i18n-placeholder="form.phone"
+          required>
+
+    <textarea name="mensagem" id="mensagem"
+              placeholder="Mensagem"
+              data-i18n-placeholder="form.message"
+              rows="5" required></textarea>
+
+    <button type="submit" data-i18n="form.send">
+      Enviar
+    </button>
+
+</section>
+
+<footer>
+  2026 - LOA Information Technology<br/>
+  <div class="redes">
+  
+    <a href="https://www.instagram.com/loa.development/" target="_blank">Instagram</a>
+    
+  </div>
+</footer>
+
+<!--FOLDER LANGUGE.JS-->
+
+<script src="{{ url_for('static', filename='_js/language.js') }}"></script>
+
+
+
+<script type="module" src="{{ url_for('static', filename='_js/firebase.js') }}"></script>
+
+</body>
+</html>

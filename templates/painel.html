@@ -1,0 +1,101 @@
+<html lang='pt-br'>
+<head>
+  <title>painel user</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/estilo.css') }}">
+  <link rel="shortcut icon" type="imagex/png" href="{{ url_for('static', filename='_images/logo_loa.ico')}}">
+</head>
+
+<body>
+  <div class="user-card" style="padding: 20px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px;">
+    <h2>
+      <span data-i18n="welcome-prefix">Bem-vindo, </span>
+      <span id="userName">Loading...</span>!
+    </h2>
+    <p><b>E-mail:</b> <span id="userEmail">-</span></p>
+
+    <p><b data-i18n="PainelCompany">Empresa:</b> <span id="userCompany">-</span></p>
+    
+    <!-- License Status Badge -->
+    <div style="margin-top: 15px; padding: 10px; background: #1e293b; color: #38bdf8; border-radius: 5px; display: inline-block;">
+        <span id="brainbotStatus">Verifing license key...</span>
+    </div>
+</div>
+
+
+
+
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  // 1. Import do Firestore adicionado
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+ const firebaseConfig = {
+  apiKey: "AIzaSyBmO8o7TOrBlmDE9TlVRUc3x_mRIOBoIPo",
+  authDomain: "loa-it-register.firebaseapp.com",
+  databaseURL: "https://loa-it-register-default-rtdb.firebaseio.com",
+  projectId: "loa-it-register",
+  storageBucket: "loa-it-register.firebasestorage.app",
+  messagingSenderId: "589578158423",
+  appId: "1:589578158423:web:f961ed8dc9cb6a0da37e12",
+  measurementId: "G-42HGBC4Q5K"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app); // 2. Inicializa o Firestore
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Exibe e-mail e nome inicial
+      document.getElementById("userEmail").innerText = user.email;
+
+      // 3. Busca os dados cadastrais (Empresa/Nome) direto do Firestore pelo UID
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          document.getElementById("userCompany").innerText = userData.company || "Não informada";
+          document.getElementById("userName").innerText = userData.username || user.email.split('@')[0];
+        } else {
+          document.getElementById("userCompany").innerText = "Sem empresa registrada";
+          document.getElementById("userName").innerText = user.email.split('@')[0];
+        }
+      } catch (err) {
+        console.error("Erro ao buscar perfil do usuário:", err);
+        document.getElementById("userCompany").innerText = "Erro ao carregar";
+      }
+
+      // 4. Busca o status da licença do produto no backend Flask
+      try {
+        const response = await fetch('/api/user-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email, product: 'brainbot' })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById("brainbotStatus").innerText = data.status_text;
+        } else {
+          document.getElementById("brainbotStatus").innerText = "ERROR, COULD NOT CREATE THE KEY";
+        }
+      } catch (err) {
+        console.error("Erro ao obter status da licença:", err);
+        document.getElementById("brainbotStatus").innerText = "ERROR, SERVER ISN'T ABLE";
+      }
+
+    } else {
+     if (window.location.pathname !== "/" && window.location.pathname !== "/login") {
+      window.location.href = "/";
+     }
+    }
+  });
+</script>
+
+<script src="{{ url_for('static', filename='_js/language.js') }}"></script>

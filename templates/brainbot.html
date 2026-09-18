@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="imagex/png" href="{{ url_for('static', filename='_images/logo_loa.ico')}}">
+    <title>BrainBot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/saibamaismarketing.css') }}">
+</head>
+<body>
+
+<h1 class="titulo" data-i18n="brain.title">Área do BrainBot</h1>
+
+<div class="container">
+    <div class="card">
+
+        <img src="{{ url_for('static', filename='_images/logo_brainbot.png')}}" alt="Download">
+
+        <h2 data-i18n="brain.section.find">O que você encontrará aqui:</h2>
+
+        <h2 data-i18n="brain.section.about">Sobre o BrainBot:</h2>
+
+        <p data-i18n="brain.description">
+            O <b>BrainBot</b> é um assistente inteligente criado para <b>facilitar buscas e automações no computador.</b>,
+            Ele atua como um hub de produtividade com IA, capaz de: <br><br>
+
+            📄 <b>Buscar informações em PDFs, planilhas e bancos de dados locais, identificando trechos e respostas relevantes.</b><br>
+            💬 <b>Interagir com o usuário em linguagem natural, aprendendo com as conversas e melhorando suas respostas ao longo do tempo.</b><br>
+            ⚡ <b>Integrar dados locais e online, tornando a busca mais rápida, precisa e intuitiva.</b><br><br>
+
+            💡 Conceito:<br>
+            “O poder do cérebro humano, a eficiência de uma máquina e a energia de um raio — tudo em um só assistente.”
+        </p>
+
+    </div>
+</div>
+
+<hr style="margin: 40px 0;">
+
+<b data-i18n="brain.status">
+    <h2 data-i18n="brain.downloads.title">📂 Arquivos para Download:</h2>
+    <div class="download-item">
+
+        <h3 data-i18n="brain.downloads.zip.title">BrainBot_Beta_version_2.5.zip</h3>
+
+        <p data-i18n="brain.downloads.zip.desc1">
+            Software desenvolvido para o auxilio de encontrar coisas especificas em Banco de Dados arquivos PDFs planilhas e etc. 
+        </p>
+
+        <p data-i18n="brain.downloads.zip.desc2">
+            <b>Observaçãos:</b><wbr> <br>
+            <b>Na versão beta não é possivel fazer consultas em banco de dados. </b> <wbr> <br>
+            <b>O BrainBot utiliza comnuicação através de Inteligencia Artificial podendo haver aluçinações nas respostas. </b><wbr> <br>
+            <b>O BRAINBOT PODE LEVAR ATÉ 10 SEGUNDOS PARA ABRIR (VERSÃO 2.5 CONTA COM TELA DE LOADING)</b><wbr> <br>
+            <b>Requer Windows 10/11.</b><wbr> <br>
+        </p>
+
+        <a id= "downloadbrainbotlink" href="https://drive.usercontent.google.com/download?id=1ds6a_wuQUzbxDr7d7dbWDRZx_iJ3lq6l&export=download&authuser=0" 
+        target="_blank" class="btn-download" download  data-i18n="brain.downloads.zip.button"></a>
+        
+        
+    </div>
+</b>
+
+
+<div>
+    <h1>BrainBot Trial</h1>
+    <p data-i18n="trialDescription">Gere sua chave de teste gratuita de 7 dias abaixo para desbloquear o aplicativo BrainBot.</p>
+    
+    <button id="btn-request-key" class="btn" data-i18n="btnGenerateKey">Generate Trial Key</button>
+    
+    <div id="result" class="key-box"></div>
+</div>
+
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ url_for('index') }}" class="btn" data-i18n="brain.back">⬅️ Voltar</a>
+</div>
+
+<script src="{{ url_for('static', filename='_js/language.js') }}"></script>
+
+<script type="module" src="{{ url_for('static', filename='_js/firebase.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainBot - Get Trial Key</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; max-width: 400px; width: 100%; }
+        h1 { margin-top: 0; color: #38bdf8; }
+        p { color: #94a3b8; font-size: 0.95rem; }
+        .btn { background: #0284c7; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; width: 100%; margin-top: 15px; }
+        .btn:hover { background: #0369a1; }
+        .key-box { margin-top: 20px; padding: 15px; background: #0f172a; border: 2px dashed #38bdf8; border-radius: 8px; font-weight: bold; font-size: 1.2rem; color: #4ade80; display: none; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>BrainBot Trial</h1>
+    <p>Generate your free 7-day trial key below to unlock the BrainBot application.</p>
+    
+    <button class="btn" onclick="requestKey()">Generate Trial Key</button>
+    
+    <div id="result" class="key-box"></div>
+</div>
+
+<!-- Importe o Firebase no painel.html (mesma versão que usou no index) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  // Suas credenciais do Firebase (as mesmas do index.html)
+ const firebaseConfig = {
+  apiKey: "AIzaSyBmO8o7TOrBlmDE9TlVRUc3x_mRIOBoIPo",
+  authDomain: "loa-it-register.firebaseapp.com",
+  databaseURL: "https://loa-it-register-default-rtdb.firebaseio.com",
+  projectId: "loa-it-register",
+  storageBucket: "loa-it-register.firebasestorage.app",
+  messagingSenderId: "589578158423",
+  appId: "1:589578158423:web:f961ed8dc9cb6a0da37e12",
+  measurementId: "G-42HGBC4Q5K"
+};
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  let userEmail = null;
+
+  // 1. Detecta automaticamente o usuário que logou na index.html
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userEmail = user.email;
+      console.log("Usuário autenticado no Painel:", userEmail);
+      
+      // Opcional: exibe o e-mail na tela se tiver um elemento com esse ID
+      const displayElem = document.getElementById("userDisplay");
+      if (displayElem) displayElem.innerText = userEmail;
+
+    } else {
+      // Se não houver sessão ativa, redireciona de volta para a tela de login
+      window.location.href = "/";
+    }
+  });
+
+  // 2. Função para gerar a chave usando o e-mail logado
+  window.requestKey = async function() {
+    if (!userEmail) {
+      alert("Aguardando autenticação do usuário...");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/register-license', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail }) // Pega o e-mail automático do Firebase!
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Sua chave foi gerada: " + data.license_key);
+      } else {
+        alert(data.message || "Erro ao gerar chave.");
+      }
+    } catch (err) {
+      console.error("Erro:", err);
+      alert("Erro ao conectar com o servidor.");
+    }
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="imagex/png" href="{{ url_for('static', filename='_images/logo_loa.ico')}}">
+    <title>LogiHeart System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/saibamaismarketing.css') }}">
+</head>
+<body>
+
+<h1 class="titulo" data-i18n="logi.title">Área do LogiHeart</h1>
+
+<div class="container">
+    <div class="card">
+
+        <img src="{{ url_for('static', filename='_images/icone_lh2250250.png') }}" 
+             alt="StockHeart">
+
+        <h2 data-i18n="logi.section.find">O que você encontrará aqui:</h2>
+
+        <h2 data-i18n="logi.section.about">Sobre o LogiHeart</h2>
+
+        <p data-i18n="logi.description">
+            O <b>LogiHeart</b> é a solução flagship da <b>LOA I.T.</b>, desenvolvida para oferecer controle total sobre o seu inventário.<wbr><br>
+            Um sistema robusto e completo, ideal para a gestão inteligente de estoques em almoxarifados, varejo, linhas de produção e operações logísticas.<wbr><br>
+            O diferencial do LogiHeart é a sua <b>alta flexibilidade</b>: nós adaptamos as funcionalidades do sistema para atender exatamente às necessidades específicas da sua empresa.<wbr><br>
+            Construído sob padrões técnicos de alta performance, utiliza banco de dados <b>MySQL</b> e tecnologia de consulta ágil via <b>QR Code</b>.<wbr><br>
+            Explore nossa versão de demonstração abaixo para vivenciar a interface e os recursos na prática.<wbr><br>
+            Disponibilizamos os links para download (indicado para usuários com conhecimento em MySQL) e uma galeria de screenshots para uma visualização rápida.
+        </p>
+
+    </div>
+</div>
+
+<hr style="margin: 40px 0;">
+
+<div class="downloads">
+
+    <h2 data-i18n="logi.downloads.title">📂 Arquivos para Download:</h2>
+
+    <div class="download-item">
+
+        <h3 data-i18n="logi.downloads.zip.title">LogiHeart Logistic System (ZIP)</h3>
+
+        <p data-i18n="logi.downloads.zip.desc1">
+            Software desenvolvido para controle logístico, gestão de estoque e relatórios.
+        </p>
+
+        <p data-i18n="logi.downloads.zip.desc2">
+            Observação: O LogiHeart utiliza banco de dados MySQL. O passo a passo de configuração está incluso no download. Requer Windows 10/11.
+        </p>
+
+    
+        <button type="button" id="btn-download-zip" class="btn-download"
+            class="btn-download"
+            onclick="downloadFile('Stock_Heart_System_v5.1.zip')"
+            data-i18n="logi.downloads.zip.button" >
+        📥 Baixar ZIP
+        </button>
+
+        <div>
+            <h1>StockHeart Trial</h1>
+            <p data-i18n="trialDescriptionStock">Gere sua chave de teste gratuita de 7 dias abaixo para desbloquear o aplicativo StockHeart</p>
+            
+            <button onclick="requestKeyStockHeart()"data-i18n="btnGenerateKey">Gerar Chave StockHeart</button>
+            
+            <div id="result" class="key-box"></div>
+        </div>
+
+        <h3 data-i18n="logi.downloads.pdf.title">
+            PDF — LogiHeart Interface Gráfica
+        </h3>
+
+        <p data-i18n="logi.downloads.pdf.desc">
+            Pequena apresentação da evolução do LogiHeart desde as primeiras versões (English).
+        </p>
+
+        <a href="{{ url_for('static', filename='_media/Introduction and evolution of LogiHeart 2.pdf') }}"
+           class="btn-download"
+           target="_blank"
+           data-i18n="logi.downloads.pdf.button">
+            📋 Baixar PDF
+        </a>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ url_for('index') }}" class="btn" data-i18n="logi.back">⬅️ Voltar</a>
+</div>
+
+<script src="{{ url_for('static', filename='_js/language.js') }}"></script>
+
+
+<script type="module" src="{{ url_for('static', filename='_js/firebase.js') }}"></script>
+
+
+<script type="module">
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  let userEmail = null;
+  const auth = getAuth(); // Pega a instância do Firebase já inicializada no projeto
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userEmail = user.email;
+      console.log("Usuário autenticado no StockHeart:", userEmail);
+    } else {
+      doSomething();
+    }
+  });
+
+  window.requestKeyStockHeart = async function() {
+    if (!userEmail) {
+      alert("Aguardando autenticação do usuário...");
+    }
+
+    try {
+      const response = await fetch('/api/register-license/stockheart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: userEmail,
+          product: 'stockheart'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Sua chave StockHeart foi gerada com sucesso: " + data.license_key);
+      } else {
+        alert(data.message || "Erro ao gerar chave.");
+      }
+    } catch (err) {
+      console.error("Erro:", err);
+      alert("Erro ao conectar com o servidor.");
+    }
+  };
+</script>
+
+</body>
+</html>

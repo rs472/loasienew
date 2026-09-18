@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Mensagem Enviada</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .mensagem {
+      background-color: #1e1e1e;
+      padding: 30px;
+      border: 2px solid #00ff99;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,255,153,0.3);
+    }
+    .mensagem a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #00ff99;
+      font-weight: bold;
+    }
+    .mensagem a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="mensagem">
+    <h2>✅ Mensagem enviada com sucesso!</h2>
+    <a href="{{ url_for('index') }}" class="btn">⬅️ Voltar</a>
+  </div>
+</body>
+</html>

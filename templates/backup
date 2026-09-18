@@ -1,0 +1,4 @@
+<h2>Login</h2>
+          <input type="email" id="eMail" placeholder="E-mail" required><br><br>
+          <input type="password" id="passWord" placeholder="Senha" required><br><br>
+          <button type="submit">Entrar</button>
