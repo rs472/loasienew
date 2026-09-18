@@ -1,0 +1,195 @@
+/* Importando uma fonte moderna (Opcional, mas dá outro nível ao visual) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Reset e variáveis para fácil personalização */
+:root {
+  --bg-dark: #0a0c10;
+  --bg-card: rgba(15, 23, 42, 0.85);
+  --blue-primary: #0066ff;
+  --blue-glow: #00d2ff;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --border-color: rgba(0, 102, 255, 0.2);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+}
+
+/* ==========================================
+   BOTÃO DE ABRIR LOGIN (NO TOPO)
+   ========================================== */
+#btnLogin {
+  background: linear-gradient(135deg, var(--blue-primary), #004080);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+}
+
+#btnLogin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5), 0 0 10px var(--blue-glow);
+  background: linear-gradient(135deg, #1a75ff, #0052cc);
+}
+
+/* ==========================================
+   CARD MODAL / JANELA DE LOGIN
+   ========================================== */
+#windowLogin {
+  /* Substitui os estilos do HTML */
+  width: 100%;
+  max-width: 380px;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  /* Visual Dark Glassmorphism */
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px;
+  padding: 30px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8),
+              0 0 20px rgba(0, 102, 255, 0.15);
+  
+  /* Animação suave de entrada */
+  animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Títulos */
+#windowLogin h2 {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#windowLogin h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: var(--blue-glow);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--blue-glow);
+}
+
+/* ==========================================
+   INPUTS (CAMPOS DE TEXTO)
+   ========================================== */
+#windowLogin input {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+#windowLogin input::placeholder {
+  color: var(--text-muted);
+}
+
+#windowLogin input:focus {
+  outline: none;
+  border-color: var(--blue-primary);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.3);
+}
+
+/* Ajuste nos espaçamentos dos br */
+#windowLogin br {
+  display: none; /* Oculta as tags br para usar o controle de margem CSS */
+}
+
+#windowLogin form input {
+  margin-bottom: 12px;
+}
+
+/* ==========================================
+   BOTÕES INTERNOS (ENVIAR / FECHAR)
+   ========================================== */
+#windowLogin button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: var(--blue-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+#windowLogin button[type="submit"]:hover {
+  background: #1a75ff;
+  box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+}
+
+#btnClose {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+#btnClose:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Linha divisória */
+#windowLogin hr {
+  border: 0 !important;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 102, 255, 0.4), transparent) !important;
+  margin: 24px 0 !important;
+}
+
+/* Customização da barra de rolagem interna do modal se necessário */
+#windowLogin::-webkit-scrollbar {
+  width: 6px;
+}
+#windowLogin::-webkit-scrollbar-thumb {
+  background: rgba(0, 102, 255, 0.3);
+  border-radius: 3px;
+}
