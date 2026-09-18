@@ -182,6 +182,8 @@ if (registrationForm) {
     btnCreate.textContent = "Criar";
   }
 }
+  });
+}
 
 
 // --- ETAPA 2: Clique no botão "Validar Código" (#btn-verify) ---
