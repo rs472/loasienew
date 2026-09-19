@@ -484,8 +484,6 @@ load_dotenv()
 # No Render, ele lerá a variável configurada no painel da plataforma
 resend.api_key = os.getenv("RESEND_API_KEY")
 
- # Obtenha gratuitamente em resend.com
-
 @app.route('/api/send-2fa', methods=['POST'])
 def send_2fa():
     data = request.get_json(silent=True) or {}
@@ -504,8 +502,11 @@ def send_2fa():
         'used': False
     })
 
-    # Envio via API HTTP
+    # Envio via API HTTP do Resend
     try:
+        # Garante que a chave é atribuída caso não esteja global
+        resend.api_key = os.getenv("RESEND_API_KEY")
+        
         resend.Emails.send({
             "from": "onboarding@resend.dev",
             "to": [email],
@@ -514,7 +515,6 @@ def send_2fa():
         })
         return jsonify({"success": True, "message": "Código enviado por e-mail!"})
     except Exception as e:
-        # Exibe o erro exato no terminal do Python
         print(f"Erro ao enviar 2FA: {e}") 
         return jsonify({"success": False, "message": str(e)}), 500
 
