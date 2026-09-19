@@ -48,19 +48,26 @@ import firebase_admin
 from dotenv import load_dotenv
 from firebase_admin import credentials, firestore
 
-# Aponta para o arquivo .env no mesmo diretório do arquivo atual (app.py)
-env_path = Path(__file__).resolve().parent / '.env'
-load_dotenv(dotenv_path=env_path)
+# Tenta carregar o .env local apenas se o arquivo existir no seu computador
+load_dotenv()
 
+# Busca a variável de ambiente (no Render vem do Painel; localmente vem do .env)
 b64_config = os.getenv("FIREBASE_CONFIG_BASE64")
 
-if b64_config:
-    b64_config = b64_config.strip()
-    
-    missing_padding = len(b64_config) % 4
-    if missing_padding:
-        b64_config += '=' * (4 - missing_padding)
+if not b64_config:
+    raise ValueError(
+        "A variável 'FIREBASE_CONFIG_BASE64' não foi encontrada. "
+        "Verifique se ela está cadastrada no menu Environment no Dashboard do Render."
+    )
 
+# Formata o Base64
+b64_config = b64_config.strip()
+missing_padding = len(b64_config) % 4
+if missing_padding:
+    b64_config += '=' * (4 - missing_padding)
+
+# Decodifica para o dicionário do Firebase
+try:
     decoded_bytes = base64.b64decode(b64_config)
     
     try:
@@ -68,10 +75,13 @@ if b64_config:
     except UnicodeDecodeError:
         cred_dict = json.loads(decoded_bytes.decode("utf-16"))
 
+except Exception as e:
+    raise ValueError(f"Erro ao processar a chave FIREBASE_CONFIG_BASE64: {e}")
+
+# Evita reinicializar a aplicação se já estiver ativa
+if not firebase_admin._apps:
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
-else:
-    raise ValueError(f"A variável FIREBASE_CONFIG_BASE64 não foi encontrada no caminho: {env_path}")
 
 db = firestore.client()
 
