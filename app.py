@@ -5,6 +5,7 @@ from functools import wraps
 from firebase_admin import credentials, auth, firestore
 from email.mime.text import MIMEText
 import os
+import json
 
 import uuid
 from datetime import datetime
@@ -37,15 +38,33 @@ def verify_password(username, password):
 
 app = Flask(__name__)
 
-# Initialize Firebase Admin SDK
-# (Replace with your service account JSON file path)
-cred = credentials.Certificate("firebase_credentials.json")
-firebase_admin.initialize_app(cred)
+from dotenv import load_dotenv
+
+# Carrega o arquivo .env localmente (durante o desenvolvimento)
+load_dotenv()
+
+# Obtém o conteúdo do JSON gravado na variável FIREBASE_CONFIG
+firebase_config_str = os.getenv("FIREBASE_CONFIG")
+
+if firebase_config_str:
+    try:
+        cred_dict = json.loads(firebase_config_str)
+        
+        # Garante que as quebras de linha da private_key fiquem corretas
+        if "private_key" in cred_dict and isinstance(cred_dict["private_key"], str):
+            cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
+            
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Erro ao decodificar a variável FIREBASE_CONFIG: {e}")
+else:
+    raise ValueError("A variável de ambiente FIREBASE_CONFIG não foi encontrada.")
+
 db = firestore.client()
 
-# Directory where your PDF/ZIP files are actually stored
+# Diretório de arquivos do seu projeto
 DOWNLOADS_DIR = os.path.join(app.root_path, 'static', '_media')
-
 
 #path firebase json
 
