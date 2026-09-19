@@ -19,6 +19,8 @@ from flask import Flask, request, jsonify, session
 from flask_mail import Mail, Message  # Exemplo com Flask-Mail
 import random
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import base64
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -38,34 +40,34 @@ def verify_password(username, password):
 
 app = Flask(__name__)
 
-from dotenv import load_dotenv
-
-# Carrega o arquivo .env localmente (durante o desenvolvimento)
 load_dotenv()
 
-firebase_config_str = os.getenv("FIREBASE_CONFIG")
+b64_config = os.getenv("FIREBASE_CONFIG_BASE64")
 
-if firebase_config_str:
-    cred_dict = json.loads(firebase_config_str)
+if b64_config:
+    b64_config = b64_config.strip()
     
-    # Tratamento garantido para a private_key
-    if "private_key" in cred_dict and isinstance(cred_dict["private_key"], str):
-        pk = cred_dict["private_key"]
-        
-        # Se a chave tiver o texto '\n' literal, substitui por quebra de linha real
-        if "\\n" in pk:
-            pk = pk.replace("\\n", "\n")
-            
-        cred_dict["private_key"] = pk
+    # Ajusta padding do Base64 se necessário
+    missing_padding = len(b64_config) % 4
+    if missing_padding:
+        b64_config += '=' * (4 - missing_padding)
+
+    # Decodifica os bytes e converte para dicionário JSON
+    decoded_bytes = base64.b64decode(b64_config)
+    
+    try:
+        cred_dict = json.loads(decoded_bytes.decode("utf-8"))
+    except UnicodeDecodeError:
+        # Fallback de segurança para UTF-16 caso o arquivo tenha sido gerado via Powershell Out-File
+        cred_dict = json.loads(decoded_bytes.decode("utf-16"))
 
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 else:
-    raise ValueError("A variável FIREBASE_CONFIG não foi encontrada.")
+    raise ValueError("A variável FIREBASE_CONFIG_BASE64 não foi encontrada no arquivo .env.")
 
 db = firestore.client()
 
-# Diretório de arquivos do seu projeto
 DOWNLOADS_DIR = os.path.join(app.root_path, 'static', '_media')
 
 #path firebase json
@@ -484,6 +486,8 @@ load_dotenv()
 # No Render, ele lerá a variável configurada no painel da plataforma
 resend.api_key = os.getenv("RESEND_API_KEY")
 
+ # Obtenha gratuitamente em resend.com
+
 @app.route('/api/send-2fa', methods=['POST'])
 def send_2fa():
     data = request.get_json(silent=True) or {}
@@ -502,22 +506,19 @@ def send_2fa():
         'used': False
     })
 
-    # Envio via API HTTP do Resend
+    # Envio via API HTTP
     try:
-        # Garante que a chave é atribuída caso não esteja global
-        resend.api_key = os.getenv("RESEND_API_KEY")
-        
         resend.Emails.send({
-            "from": "onboarding@resend.dev",
+            "from": "nao-responda@loait.com.br",
             "to": [email],
             "subject": "Seu Código de Verificação",
             "html": f"<p>Seu código é: <strong>{code}</strong></p>"
         })
         return jsonify({"success": True, "message": "Código enviado por e-mail!"})
     except Exception as e:
+        # Exibe o erro exato no terminal do Python
         print(f"Erro ao enviar 2FA: {e}") 
         return jsonify({"success": False, "message": str(e)}), 500
-
 # 2. ETAPA: Valida o código E CRIA a conta / Login
 @app.route('/api/verify-2fa', methods=['POST'])
 def verify_2fa():
