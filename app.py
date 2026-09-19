@@ -486,7 +486,7 @@ def send_2fa():
     # Envio via API HTTP
     try:
         resend.Emails.send({
-            "from": "nao-responda@loait.com",
+            "from": "onboarding@resend.dev",
             "to": [email],
             "subject": "Seu Código de Verificação",
             "html": f"<p>Seu código é: <strong>{code}</strong></p>"
