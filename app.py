@@ -43,23 +43,25 @@ from dotenv import load_dotenv
 # Carrega o arquivo .env localmente (durante o desenvolvimento)
 load_dotenv()
 
-# Obtém o conteúdo do JSON gravado na variável FIREBASE_CONFIG
 firebase_config_str = os.getenv("FIREBASE_CONFIG")
 
 if firebase_config_str:
-    try:
-        cred_dict = json.loads(firebase_config_str)
+    cred_dict = json.loads(firebase_config_str)
+    
+    # Tratamento garantido para a private_key
+    if "private_key" in cred_dict and isinstance(cred_dict["private_key"], str):
+        pk = cred_dict["private_key"]
         
-        # Garante que as quebras de linha da private_key fiquem corretas
-        if "private_key" in cred_dict and isinstance(cred_dict["private_key"], str):
-            cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
+        # Se a chave tiver o texto '\n' literal, substitui por quebra de linha real
+        if "\\n" in pk:
+            pk = pk.replace("\\n", "\n")
             
-        cred = credentials.Certificate(cred_dict)
-        firebase_admin.initialize_app(cred)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Erro ao decodificar a variável FIREBASE_CONFIG: {e}")
+        cred_dict["private_key"] = pk
+
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred)
 else:
-    raise ValueError("A variável de ambiente FIREBASE_CONFIG não foi encontrada.")
+    raise ValueError("A variável FIREBASE_CONFIG não foi encontrada.")
 
 db = firestore.client()
 
