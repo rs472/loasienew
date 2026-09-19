@@ -40,31 +40,38 @@ def verify_password(username, password):
 
 app = Flask(__name__)
 
-load_dotenv()
+import base64
+import json
+import os
+from pathlib import Path
+import firebase_admin
+from dotenv import load_dotenv
+from firebase_admin import credentials, firestore
+
+# Aponta para o arquivo .env no mesmo diretório do arquivo atual (app.py)
+env_path = Path(__file__).resolve().parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 b64_config = os.getenv("FIREBASE_CONFIG_BASE64")
 
 if b64_config:
     b64_config = b64_config.strip()
     
-    # Ajusta padding do Base64 se necessário
     missing_padding = len(b64_config) % 4
     if missing_padding:
         b64_config += '=' * (4 - missing_padding)
 
-    # Decodifica os bytes e converte para dicionário JSON
     decoded_bytes = base64.b64decode(b64_config)
     
     try:
         cred_dict = json.loads(decoded_bytes.decode("utf-8"))
     except UnicodeDecodeError:
-        # Fallback de segurança para UTF-16 caso o arquivo tenha sido gerado via Powershell Out-File
         cred_dict = json.loads(decoded_bytes.decode("utf-16"))
 
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 else:
-    raise ValueError("A variável FIREBASE_CONFIG_BASE64 não foi encontrada no arquivo .env.")
+    raise ValueError(f"A variável FIREBASE_CONFIG_BASE64 não foi encontrada no caminho: {env_path}")
 
 db = firestore.client()
 
