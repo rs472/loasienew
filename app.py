@@ -48,37 +48,35 @@ import firebase_admin
 from dotenv import load_dotenv
 from firebase_admin import credentials, firestore
 
-# Tenta carregar o .env local apenas se o arquivo existir no seu computador
+# Carrega .env se existir na sua máquina (no Render o arquivo não existe e não fará falta)
 load_dotenv()
 
-# Busca a variável de ambiente (no Render vem do Painel; localmente vem do .env)
+# Pega a variável direto do ambiente do Render ou do seu .env local
 b64_config = os.getenv("FIREBASE_CONFIG_BASE64")
 
 if not b64_config:
     raise ValueError(
-        "A variável 'FIREBASE_CONFIG_BASE64' não foi encontrada. "
-        "Verifique se ela está cadastrada no menu Environment no Dashboard do Render."
+        "A variável 'FIREBASE_CONFIG_BASE64' não está configurada. "
+        "Verifique a aba 'Environment' do seu serviço no painel do Render."
     )
 
-# Formata o Base64
+# Ajuste de espaços e padding
 b64_config = b64_config.strip()
 missing_padding = len(b64_config) % 4
 if missing_padding:
     b64_config += '=' * (4 - missing_padding)
 
-# Decodifica para o dicionário do Firebase
+# Decodificação
 try:
     decoded_bytes = base64.b64decode(b64_config)
-    
     try:
         cred_dict = json.loads(decoded_bytes.decode("utf-8"))
     except UnicodeDecodeError:
         cred_dict = json.loads(decoded_bytes.decode("utf-16"))
-
 except Exception as e:
-    raise ValueError(f"Erro ao processar a chave FIREBASE_CONFIG_BASE64: {e}")
+    raise ValueError(f"Falha ao decodificar a chave Base64 do Firebase: {e}")
 
-# Evita reinicializar a aplicação se já estiver ativa
+# Inicialização do Firebase Admin SDK
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
