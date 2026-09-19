@@ -446,7 +446,7 @@ def register_user():
 #implementação no Firestore (E-mail ou SMS):
 
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 def generate_otp_code() -> str:
     """Gera um código de 6 dígitos."""
@@ -454,8 +454,16 @@ def generate_otp_code() -> str:
 
 
 import resend
+from dotenv import load_dotenv
+import os
 
-resend.api_key = "re_3CxnkVAL_8WuD3ARGppCGJFgi4Bug9grm"  # Obtenha gratuitamente em resend.com
+# Carrega o arquivo .env apenas localmente (se ele existir)
+load_dotenv()
+
+# No Render, ele lerá a variável configurada no painel da plataforma
+resend.api_key = os.getenv("RESEND_API_KEY")
+
+ # Obtenha gratuitamente em resend.com
 
 @app.route('/api/send-2fa', methods=['POST'])
 def send_2fa():
@@ -466,7 +474,7 @@ def send_2fa():
         return jsonify({"success": False, "message": "E-mail não fornecido."}), 400
 
     code = str(random.randint(100000, 999999))
-    expires_at = datetime.utcnow() + timedelta(minutes=10)
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
 
     # Salva no Firestore
     db.collection('2fa_codes').document(email).set({
@@ -485,6 +493,8 @@ def send_2fa():
         })
         return jsonify({"success": True, "message": "Código enviado por e-mail!"})
     except Exception as e:
+        # Exibe o erro exato no terminal do Python
+        print(f"Erro ao enviar 2FA: {e}") 
         return jsonify({"success": False, "message": str(e)}), 500
 
 # 2. ETAPA: Valida o código E CRIA a conta / Login
